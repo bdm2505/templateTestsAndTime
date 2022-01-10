@@ -3,7 +3,5 @@
 #### код решение вашей задачи поместите в функцию run
 #### для получения входных данных используйте scanner 
 #### <code> String s = scanner.nextLine(); </code>
-#### для примера сделаем все буквы заглавными
-#### <code> String res = s.toUpperCase(); </code>
 #### для записи ответа используйте writer например:
 #### <code>writer.println(res); </code>

@@ -1,6 +1,6 @@
 ### Тестирование алгоритмов, расчет времени работы задачи и память затраченной на выполнение
 
-#### сначала скачать проэкт [тут](https://github.com/bdm2505/templateTestsAndTime/archive/refs/heads/master.zip Скачать проэкт)
+#### сначала скачать проэкт [тут](https://github.com/bdm2505/templateTestsAndTime/archive/refs/heads/master.zip)
 #### распаковать и открыть в idea 
 #### наследуйте класс от Algorithm
 #### код решение вашей задачи поместите в функцию run

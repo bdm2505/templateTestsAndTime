@@ -83,7 +83,7 @@ public class Tester {
             System.out.println("---------------------------------------------------------\n");
             createCell(row, 3, "OK");
 
-            double time = (endTime - startTime) ;
+            long time = (endTime - startTime) ;
             if (time < 1) time = 1;
             createCell(row, 4, "" + time);
             createCell(row, 5, "" + memory);
@@ -118,7 +118,7 @@ public class Tester {
 
 
     private static double getMemoryMb() {
-        return Math.round((Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / 104857.6) / 10.0;
+        return Math.round((Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / 104857.6) / 10.0 - 1;
     }
 
     private static void createCell(HSSFRow rowNumber, int column, String name) {

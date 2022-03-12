@@ -1,9 +1,9 @@
-import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+package tests;
+
+import org.apache.poi.hssf.usermodel.*;
 
 import java.io.*;
+import java.util.Arrays;
 import java.util.Scanner;
 
 public class Tester {
@@ -14,12 +14,18 @@ public class Tester {
 
             HSSFSheet sheet = wb.createSheet("Task");
             HSSFRow row = sheet.createRow(0);
-            createCell(row, 0, "N");
-            createCell(row, 1, "input");
-            createCell(row, 2, "output");
-            createCell(row, 3, "correctness");
-            createCell(row, 4, "time in ms");
-            createCell(row, 5, "memory in MB");
+            HSSFCellStyle cs = wb.createCellStyle();
+
+            cs.setFont(wb.createFont());
+            // Word Wrap MUST be turned on
+            cs.setWrapText(true);
+
+            createCell(row, 0, "N", cs);
+            createCell(row, 1, "input", cs);
+            createCell(row, 2, "output", cs);
+            createCell(row, 3, "correctness", cs);
+            createCell(row, 4, "time in ms", cs);
+            createCell(row, 5, "memory in MB", cs);
             Thread.sleep(300);
 
             File dir = new File(algorithm.inputFolder());
@@ -27,8 +33,9 @@ public class Tester {
                 System.err.println(dir.getAbsolutePath() + " - not directory");
             }
             File[] files = dir.listFiles(File::isFile);
+            Arrays.sort(files);
             for (int i = 0; i < files.length; i++) {
-                test(files[i], i + 1, algorithm, sheet.createRow(i + 1));
+                test(files[i], i + 1, algorithm, sheet.createRow(i + 1), cs);
             }
 
             sheet.autoSizeColumn(0);
@@ -52,7 +59,7 @@ public class Tester {
         }
     }
 
-    private static void test(File input, int numTest, Algorithm algorithm, HSSFRow row) {
+    private static void test(File input, int numTest, Algorithm algorithm, HSSFRow row, HSSFCellStyle cs) {
         String output = "output/" + input.getName() + ".output.txt";
         try {
             File file = new File(output);
@@ -69,26 +76,26 @@ public class Tester {
             double memory = getMemoryMb();
             in.close();
             out.close();
-            createCell(row, 0, "" +numTest);
-            System.out.println("Тест №" + numTest);
-            System.out.println("---------------------Входные данные----------------------");
+            createCell(row, 0, "" +numTest, cs);
+            System.out.println("test N" + numTest);
+            System.out.println("---------------------Input data----------------------");
             String inputSt = readFile(input);
             System.out.println(inputSt);
-            createCell(row, 1, inputSt);
+            createCell(row, 1, inputSt, cs);
             System.out.println("---------------------------------------------------------\n");
-            System.out.println("--------------------Выходные данные----------------------");
+            System.out.println("--------------------Output data----------------------");
             String outputSt = readFile(new File(output));
             System.out.println(outputSt);
-            createCell(row, 2, outputSt);
+            createCell(row, 2, outputSt, cs);
             System.out.println("---------------------------------------------------------\n");
-            createCell(row, 3, "OK");
+            createCell(row, 3, "OK", cs);
 
             long time = (endTime - startTime) ;
             if (time < 1) time = 1;
-            createCell(row, 4, "" + time);
-            createCell(row, 5, "" + memory);
-            System.out.println("Затраченное время: " + time + " миллисекунд");
-            System.out.println("Затраченная память: " + memory + "Mb");
+            createCell(row, 4, "" + time, cs);
+            createCell(row, 5, "" + memory, cs);
+            System.out.println("time : " + time + " ms");
+            System.out.println("memory: " + memory + "MB");
             System.out.println();
 
 
@@ -110,7 +117,18 @@ public class Tester {
                 sb.append("...");
                 break;
             }
-            sb.append(scanner.nextLine());
+            var ss = scanner.nextLine();
+            if (ss.length() > 40)
+                ss = ss.substring(0, 40) + "... " + (ss.length() - 40) + " symbols";
+            sb.append(ss);
+        }
+        int nn = 0;
+        while (scanner.hasNext()){
+            nn++;
+            scanner.nextLine();
+        }
+        if (count > Algorithm.MAX_LINES) {
+            sb.append("\n").append(nn).append(" lines");
         }
         scanner.close();
         return sb.toString();
@@ -121,8 +139,9 @@ public class Tester {
         return Math.round((Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / 104857.6) / 10.0 - 1;
     }
 
-    private static void createCell(HSSFRow rowNumber, int column, String name) {
+    private static void createCell(HSSFRow rowNumber, int column, String name, HSSFCellStyle cs) {
         HSSFCell cell = rowNumber.createCell(column);
+        cell.setCellStyle(cs);
         cell.setCellValue(name);
     }
 }
